@@ -22,10 +22,11 @@ module Coverband
 
       def save_report(report)
         store_array(base_key, report.keys)
-
+        result_hash = {}
         report.each do |file, lines|
-          store_map("#{base_key}.#{file}", lines)
+          result_hash.merge(merge_map("#{base_key}.#{file}", lines))
         end
+        store_hashes(key, base_key)
       end
 
       def coverage
@@ -48,15 +49,18 @@ module Coverband
 
       attr_reader :redis
 
-      def store_map(key, values)
+      def merge_map(key, values)
         unless values.empty?
           existing = redis.hgetall(key)
           # in redis all keys are strings
           values = Hash[values.map { |k, val| [k.to_s, val] }]
           values.merge!(existing) { |_k, old_v, new_v| old_v.to_i + new_v.to_i }
-          redis.mapped_hmset(key, values)
-          redis.expire(key, @ttl) if @ttl
         end
+      end
+
+      def store_hashes(key, values)
+        redis.mapped_hmset(key, values)
+        redis.expire(key, @ttl) if @ttl
       end
 
       def store_array(key, values)
