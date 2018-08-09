@@ -24,9 +24,10 @@ module Coverband
         store_array(base_key, report.keys)
         result_hash = {}
         report.each do |file, lines|
-          result_hash.merge(merge_map("#{base_key}.#{file}", lines))
+          m = merge_map("#{base_key}.#{file}", lines)
+          result_hash.merge(m) unless m.nil?
         end
-        store_hashes(key, base_key)
+        store_hashes(base_key, result_hash)
       end
 
       def coverage
@@ -54,7 +55,8 @@ module Coverband
           existing = redis.hgetall(key)
           # in redis all keys are strings
           values = Hash[values.map { |k, val| [k.to_s, val] }]
-          values.merge!(existing) { |_k, old_v, new_v| old_v.to_i + new_v.to_i }
+          values.merge(existing) { |_k, old_v, new_v| old_v.to_i + new_v.to_i }
+          values
         end
       end
 
