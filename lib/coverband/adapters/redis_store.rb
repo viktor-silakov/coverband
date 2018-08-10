@@ -20,15 +20,33 @@ module Coverband
         @base_key ||= [BASE_KEY, @redis_namespace].compact.join('.')
       end
 
+      def log(msg)
+        Coverband.configuration.logger.info(msg)
+      end
+
       def save_report(report)
-        store_array(base_key, report.keys)
+        log '@@@array'
+        log Benchmark.measure {
+          store_array(base_key, report.keys)
+        }
 
         maps = []
-        report.each do |file, lines|
-          # store_map("#{base_key}.#{file}", lines)
-          maps += create_map("#{base_key}.#{file}", lines)
-        end
-        store_maps(maps)
+        log '@@@each'
+        log Benchmark.measure {
+          report.each do |file, lines|
+            # store_map("#{base_key}.#{file}", lines)
+            #if create_map("#{base_key}.#{file}", lines).nil?
+            #  Coverband.configuration.logger.info("FFF:::::: #{file}")
+            #  Coverband.configuration.logger.info("LLL:::::: #{lines}")
+            #end
+            maps << create_map("#{base_key}.#{file}", lines)
+          end
+        }
+
+        log '@@@store'
+        log Benchmark.measure {
+          store_maps(maps)
+        }
       end
 
       def coverage
@@ -57,8 +75,8 @@ module Coverband
           # in redis all keys are strings
           values = Hash[values.map { |k, val| [k.to_s, val] }]
           values.merge!(existing) { |_k, old_v, new_v| old_v.to_i + new_v.to_i }
-          Coverband.configuration.logger.info("KEY:::::: #{key}")
-          Coverband.configuration.logger.info("VALUES:::::: #{values}")
+          # Coverband.configuration.logger.info("KEY:::::: #{key}")
+          # Coverband.configuration.logger.info("VALUES:::::: #{values}")
           redis.mapped_hmset(key, values)
           redis.expire(key, @ttl) if @ttl
         end
@@ -70,15 +88,19 @@ module Coverband
           # in redis all keys are strings
           values = Hash[values.map { |k, val| [k.to_s, val] }]
           values.merge!(existing) { |_k, old_v, new_v| old_v.to_i + new_v.to_i }
-          Coverband.configuration.logger.info("KEY:::::: #{key}")
-          Coverband.configuration.logger.info("VALUES:::::: #{values}")
-          { key => values }
+          # Coverband.configuration.logger.info("KEY:::::: #{key}")
+          # Coverband.configuration.logger.info("VALUES:::::: #{values}")
         end
+        { key => values }
       end
 
       def store_maps(maps)
+        # Coverband.configuration.logger.info("MAPS:::::: #{maps}")
         redis.pipelined do
-          maps.each do |key, values|
+          maps.each do |hash|
+            key = hash.keys[0]
+            values = hash[hash.keys[0]]
+            next if values.empty?
             redis.mapped_hmset(key, values)
             redis.expire(key, @ttl) if @ttl
           end
