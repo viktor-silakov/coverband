@@ -5,8 +5,10 @@
 ####
 module Coverband
   module Collectors
+    require 'benchmark'
     class Base
       def self.instance
+        Coverband.configuration.logger.info("start instance")
         if Coverband.configuration.collector == 'trace'
           Thread.current[:coverband_instance] ||= Coverband::Collectors::Trace.new
         elsif Coverband.configuration.collector == 'coverage'
@@ -14,6 +16,7 @@ module Coverband
         else
           raise 'select valid collector [trace, coverage]'
         end
+        Coverband.configuration.logger.info("end instance")
       end
 
       def start

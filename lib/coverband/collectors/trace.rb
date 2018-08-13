@@ -50,6 +50,7 @@ module Coverband
         end
 
         if @store
+
           @store.save_report(@file_line_usage)
           @file_line_usage.clear
         elsif @verbose

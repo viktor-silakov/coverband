@@ -50,7 +50,7 @@ module Coverband
         log '@@@array'
         log Benchmark.measure {
           store_array(base_key, report.keys)
-        }
+        }.total
 
         maps = []
         log '@@@each'
@@ -58,12 +58,12 @@ module Coverband
           report.each do |file, lines|
             maps << create_map("#{base_key}.#{file}", lines)
           end
-        }
+        }.total
 
         log '@@@store'
         log Benchmark.measure {
           store_maps(maps)
-        }
+        }.total
       end
 
       def coverage

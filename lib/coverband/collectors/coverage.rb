@@ -3,6 +3,8 @@
 module Coverband
   module Collectors
     class Coverage < Base
+      require 'benchmark'
+
       def record_coverage
         # noop
       end
@@ -11,7 +13,12 @@ module Coverband
         # noop
       end
 
+      def log(msg)
+        @logger.info(msg)
+      end
+
       def report_coverage
+        log "coverage.rb report_coverage start"
         unless @enabled
           @logger.info 'coverage disabled' if @verbose
           return
@@ -22,13 +29,16 @@ module Coverband
           return
         end
 
-        new_results = nil
-        @semaphore.synchronize { new_results = new_coverage(::Coverage.peek_result.dup) }
-        new_results.each_pair do |file, line_counts|
-          next if @ignored_files.include?(file)
-          next unless track_file?(file)
-          add_file(file, line_counts)
-        end
+        log "@semaphore.synchronize"
+        log Benchmark.measure {
+          new_results = nil
+          @semaphore.synchronize { new_results = new_coverage(::Coverage.peek_result.dup) }
+          new_results.each_pair do |file, line_counts|
+            next if @ignored_files.include?(file)
+            next unless track_file?(file)
+            add_file(file, line_counts)
+          end
+        }.total
 
         if @verbose
           @logger.debug "coverband file usage: #{file_usage.inspect}"
@@ -36,16 +46,19 @@ module Coverband
         end
 
         if @store
-          @store.save_report(@file_line_usage)
-          @file_line_usage.clear
+          b_save_report = Benchmark.measure {
+            @store.save_report(@file_line_usage)
+            @file_line_usage.clear
+          }
+          log("SAVE_REPORT: #{b_save_report.total}")
         elsif @verbose
           @logger.debug 'coverage report: '
           @logger.debug @file_line_usage.inspect
         end
-      # StandardError might be better option
-      # coverband previously had RuntimeError here
-      # but runtime error can let a large number of error crash this method
-      # and this method is currently in a ensure block in middleware
+          # StandardError might be better option
+          # coverband previously had RuntimeError here
+          # but runtime error can let a large number of error crash this method
+          # and this method is currently in a ensure block in middleware
       rescue StandardError => err
         failed!
         if @verbose
