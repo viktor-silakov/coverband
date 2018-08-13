@@ -16,7 +16,6 @@ module Coverband
         else
           raise 'select valid collector [trace, coverage]'
         end
-        Coverband.configuration.logger.info("end instance")
       end
 
       def start

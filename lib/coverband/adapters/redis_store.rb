@@ -46,7 +46,11 @@ module Coverband
       # end
 
       def save_report(report)
-        @existing_coverage = build_existing_coverage(report.keys)
+        log '@@@existing coverage'
+        log Benchmark.measure {
+          @existing_coverage = build_existing_coverage(report.keys)
+        }.total
+
         log '@@@array'
         log Benchmark.measure {
           store_array(base_key, report.keys)
