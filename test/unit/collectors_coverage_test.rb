@@ -61,7 +61,8 @@ if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.3.0')
       coverband.instance_variable_set('@logger', logger)
       coverband.instance_variable_set('@store', nil)
       assert_equal false, coverband.instance_variable_get('@enabled')
-      logger.expects(:info).at_least_once
+      logger.stubs('info')
+      logger.expects(:debug).at_least_once
       coverband.sample { 1 + 1 }
       assert_equal true, coverband.instance_variable_get('@enabled')
     end
@@ -74,6 +75,7 @@ if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.3.0')
       coverband.instance_variable_set('@store', nil)
       assert_equal false, coverband.instance_variable_get('@enabled')
       logger.expects(:info).at_least_once
+      logger.stubs('debug')
       coverband.start
       coverband.stop
       coverband.save
@@ -82,8 +84,6 @@ if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.3.0')
     test 'allow reporting to redis start stop save' do
       dog_file = File.expand_path('./dog.rb', File.dirname(__FILE__))
       coverband.instance_variable_set('@sample_percentage', 100.0)
-      coverband.instance_variable_set('@verbose', true)
-      Coverband.configuration.logger.stubs('info')
       store = Coverband::Adapters::RedisStore.new(Redis.new)
       coverband.instance_variable_set('@store', store)
 

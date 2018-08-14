@@ -40,12 +40,12 @@ module Coverband
         unset_tracer
 
         if failed_recently?
-          @logger.error 'coverage reporting standing-by because of recent failure' if @verbose
+          @logger.info 'coverage reporting standing-by because of recent failure' if @verbose
           return
         end
 
         if @verbose
-          @logger.debug "coverband file usage: #{file_usage.inspect}"
+          @logger.info "coverband file usage: #{file_usage.inspect}"
           output_file_line_usage if @verbose == 'debug'
         end
 
@@ -59,9 +59,9 @@ module Coverband
       rescue RuntimeError => err
         failed!
         if @verbose
-          @logger.error 'coverage missing'
-          @logger.error "error: #{err.inspect} #{err.message}"
-          @logger.error err.backtrace.join("\n")
+          @logger.info 'coverage missing'
+          @logger.info "error: #{err.inspect} #{err.message}"
+          @logger.info err.backtrace
         end
       end
 

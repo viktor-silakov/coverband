@@ -16,6 +16,13 @@ Will be the fully modern release that drops maintenance legacy support in favor 
 
 # Released
 
+### 2.0.2
+
+* fix possible nil error on files that changed since initial recording @viktor-silakov
+* add improve error logging in verbose mode (stacktrace) @viktor-silakov 
+* improved logging level support @viktor-silakov 
+* launch Coverband demo and integrate into Readme / Documentation
+
 ### 2.0.1
 
 * add support for fine grained S3 configuration via Coverband config, thanks @a0s

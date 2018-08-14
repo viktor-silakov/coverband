@@ -38,6 +38,8 @@ namespace :coverband do
         require baseline_file if File.exist?(baseline_file)
       end
 
+      safely_import_files(Coverband.configuration.additional_files.flatten)
+
       if defined? Rails
         Rails.application.eager_load!
         safely_import_files(Dir.glob("#{Rails.root}/app/**/*.rb"))
