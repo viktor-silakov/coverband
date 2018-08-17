@@ -22,6 +22,7 @@ namespace :coverband do
   desc 'record coverband coverage baseline'
   task :baseline do
     Coverband::Baseline.record do
+      safely_import_files(Coverband.configuration.additional_files.flatten)
       if Rake::Task.tasks.any? { |key| key.to_s.match(/environment$/) }
         Coverband.configuration.logger.info 'invoking rake environment'
         Rake::Task['environment'].invoke
@@ -38,7 +39,7 @@ namespace :coverband do
         require baseline_file if File.exist?(baseline_file)
       end
 
-      safely_import_files(Coverband.configuration.additional_files.flatten)
+      # safely_import_files(Coverband.configuration.additional_files.flatten)
 
       if defined? Rails
         Rails.application.eager_load!
@@ -47,7 +48,7 @@ namespace :coverband do
           safely_import_files(Dir.glob("#{Rails.root}/lib/**/*.rb"))
         end
       end
-      safely_import_files(Coverband.configuration.additional_files.flatten)
+      # safely_import_files(Coverband.configuration.additional_files.flatten)
     end
   end
 
