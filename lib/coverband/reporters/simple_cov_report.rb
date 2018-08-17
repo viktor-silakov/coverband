@@ -9,7 +9,8 @@ module Coverband
           mem.merge(
               { file => (
               scov = SimpleCov::LinesClassifier.new.classify(File.foreach(file))
-              cover_hits.map.with_index { |cover_hits, ind| (cover_hits.to_i + scov[ind]) unless scov[ind].nil? }
+              # cover_hits.map.with_index { |cover_hits, ind| (cover_hits.to_i + scov[ind]) unless scov[ind].nil? }
+              cover_hits.map.with_index { |cover_hits, ind|  cover_hits.to_i + scov[ind]  unless scov[ind].nil? }
               ) }
           )
         end
