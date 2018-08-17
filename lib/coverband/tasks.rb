@@ -48,7 +48,17 @@ namespace :coverband do
           safely_import_files(Dir.glob("#{Rails.root}/lib/**/*.rb"))
         end
       end
-      # safely_import_files(Coverband.configuration.additional_files.flatten)
+      redis_keys = Redis.new.keys.select{|x| x.include?("coverband2")}
+      app = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/app/")}
+      lib = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/lib/")}
+      engines = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/vendor/engines/")}
+      sleep 5
+      puts "Redis stats:"
+      puts "----------------"
+      puts "total           #{redis_keys.count}"
+      puts "app             #{app.count}"
+      puts "lib             #{lib.count}"
+      puts "vendor/engines  #{engines.count}"
     end
   end
 
