@@ -61,14 +61,14 @@ namespace :coverband do
     end
 
     project_directory = File.expand_path(Coverband.configuration.root)
-    results = convert_coverage_format(Coverage.result.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
+    results = convert_coverage_format(Coverband::Baseline.results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
     results = results.reject { |_key, val| val.empty? }
 
     cnt = 0
     i = 0
-    until cnt  >= results.count
-    cnt = Redis.new.keys.select { |x| x.include?("coverband2") }.count
-     puts "i: #{i} cnt: #{cnt}"
+    until cnt >= results.count
+      cnt = Redis.new.keys.select { |x| x.include?("coverband2") }.count
+      puts "i: #{i} cnt: #{cnt}"
       if i > 120
         puts "Error: Redis timeout after '#{i}' attempts count '#{cnt}'"
         break
