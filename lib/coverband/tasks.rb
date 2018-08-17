@@ -39,8 +39,6 @@ namespace :coverband do
         require baseline_file if File.exist?(baseline_file)
       end
 
-      # safely_import_files(Coverband.configuration.additional_files.flatten)
-
       if defined? Rails
         Rails.application.eager_load!
         safely_import_files(Dir.glob("#{Rails.root}/app/**/*.rb"))
@@ -48,18 +46,48 @@ namespace :coverband do
           safely_import_files(Dir.glob("#{Rails.root}/lib/**/*.rb"))
         end
       end
-      redis_keys = Redis.new.keys.select{|x| x.include?("coverband2")}
-      app = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/app/")}
-      lib = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/lib/")}
-      engines = redis_keys.select{|x| x.include?("coverband2")}.select {|x| x.include?("#{pwd}/vendor/engines/")}
-      sleep 5
-      puts "Redis stats:"
-      puts "----------------"
-      puts "total           #{redis_keys.count}"
-      puts "app             #{app.count}"
-      puts "lib             #{lib.count}"
-      puts "vendor/engines  #{engines.count}"
     end
+
+    def self.convert_coverage_format(results)
+      file_map = {}
+      results.each_pair do |file, data|
+        lines_map = {}
+        data.each_with_index do |hits, index|
+          lines_map[(index + 1)] = hits unless hits.nil?
+        end
+        file_map[file] = lines_map
+      end
+      file_map
+    end
+
+    project_directory = File.expand_path(Coverband.configuration.root)
+    results = convert_coverage_format(Coverage.result.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
+    results = results.reject { |_key, val| val.empty? }
+
+    cnt = 0
+    i = 0
+    until cnt  >= results.count
+    cnt = Redis.new.keys.select { |x| x.include?("coverband2") }.count
+     puts "i: #{i} cnt: #{cnt}"
+      if i > 120
+        puts "Error: Redis timeout after '#{i}' attempts count '#{cnt}'"
+        break
+      end
+      i+=1
+      sleep 1
+    end
+
+    redis_keys = Redis.new.keys.select { |x| x.include?("coverband2") }
+    app = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/app/") }
+    lib = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/lib/") }
+    engines = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/vendor/engines/") }
+
+    puts "Redis stats:"
+    puts "----------------"
+    puts "total           #{redis_keys.count}"
+    puts "app             #{app.count}"
+    puts "lib             #{lib.count}"
+    puts "vendor/engines  #{engines.count}"
   end
 
   ###

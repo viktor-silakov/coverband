@@ -21,8 +21,7 @@ module Coverband
       end
 
       def save_report(report)
-        store_array(base_key, report.keys)
-
+        store_array(base_key, report.keys.reject { |x| report[x].empty? })
         report.each do |file, lines|
           store_map("#{base_key}.#{file}", lines)
         end

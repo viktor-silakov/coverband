@@ -2,14 +2,19 @@
 
 module Coverband
   class Baseline
+
+    def self.results
+      @results
+    end
+
     def self.record
       require 'coverage'
       Coverage.start
       yield
 
       project_directory = File.expand_path(Coverband.configuration.root)
-      results = Coverage.result
-      results = results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } }
+      @results = Coverage.result
+      results = @results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } }
 
       Coverband.configuration.store.save_report(convert_coverage_format(results))
     end
