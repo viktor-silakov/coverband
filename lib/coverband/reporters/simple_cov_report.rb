@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+p Dir.pwd
 module Coverband
   module Reporters
     class SimpleCovReport < Base
@@ -8,8 +8,8 @@ module Coverband
         report.inject({}) do |mem, (file, cover_hits)|
           mem.merge(
               { file => (
-              scov = SimpleCov::LinesClassifier.new.classify(File.foreach(file))
-              cover_hits.map.with_index { |cover_hits, ind|  cover_hits.to_i + scov[ind]  unless scov[ind].nil? }
+              scov = Coverband::Reporters::LinesClassifier.new.classify(File.foreach(file))
+              cover_hits.map.with_index { |cover_hits, ind|  scov[ind].nil? ? nil  : (cover_hits.to_i + scov[ind])  }
               ) }
           )
         end

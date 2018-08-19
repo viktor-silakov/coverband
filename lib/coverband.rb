@@ -18,7 +18,7 @@ require 'coverband/reporters/simple_cov_report'
 require 'coverband/reporters/console_report'
 require 'coverband/middleware'
 require 'coverband/s3_report_writer'
-
+require 'coverband/reporters/lines_classifier'
 module Coverband
   CONFIG_FILE = './config/coverband.rb'
 
