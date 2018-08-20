@@ -62,7 +62,7 @@ namespace :coverband do
 
     project_directory = File.expand_path(Coverband.configuration.root)
     results = convert_coverage_format(Coverband::Baseline.results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
-    results = results.reject { |_key, val| val.empty? }
+    # results = results.reject { |_key, val| val.empty? }
 
     cnt = 0
     i = 0
