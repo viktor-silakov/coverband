@@ -62,11 +62,11 @@ namespace :coverband do
 
     project_directory = File.expand_path(Coverband.configuration.root)
     results = convert_coverage_format(Coverband::Baseline.results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
-    # results = results.reject { |_key, val| val.empty? }
+    results_check = results.reject { |_key, val| val.empty? }
 
     cnt = 0
     i = 0
-    until cnt >= results.count
+    until cnt >= results_check.count
       cnt = Redis.new.keys.select { |x| x.include?("coverband2") }.count
       puts "i: #{i} cnt: #{cnt}"
       if i > 120
@@ -84,10 +84,11 @@ namespace :coverband do
 
     puts "Redis stats:"
     puts "----------------"
-    puts "total           #{redis_keys.count}"
-    puts "app             #{app.count}"
-    puts "lib             #{lib.count}"
-    puts "vendor/engines  #{engines.count}"
+    puts "total                #{redis_keys.count}"
+    puts "total without empty  #{redis_keys.count}"
+    puts "app                  #{app.count}"
+    puts "lib                  #{lib.count}"
+    puts "vendor/engines       #{engines.count}"
   end
 
   ###
