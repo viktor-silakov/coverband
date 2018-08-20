@@ -85,7 +85,7 @@ namespace :coverband do
     puts "Redis stats:"
     puts "----------------"
     puts "total                #{redis_keys.count}"
-    puts "total without empty  #{redis_keys.count}"
+    puts "total without empty  #{results_check.count}"
     puts "app                  #{app.count}"
     puts "lib                  #{lib.count}"
     puts "vendor/engines       #{engines.count}"
