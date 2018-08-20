@@ -77,11 +77,12 @@ namespace :coverband do
       sleep 1
     end
 
-    redis_keys = Redis.new.keys.select { |x| x.include?("coverband2") }
+    rds = Redis.new
+    redis_keys = rds.keys.select { |x| x.include?("coverband2") }
     app = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/app/") }
     lib = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/lib/") }
     engines = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/vendor/engines/") }
-    common_coverband_lines = redis_keys.reject {|x| x == "coverband2"}.inject(0){|sum, x| sum + (Redis.new.hgetall(x).count) }
+    common_coverband_lines = redis_keys.reject {|x| x == "coverband2"}.inject(0){|sum, x| sum + (rds.hgetall(x).count) }
 
     # common_lines = 0
     # code_lines = 0
