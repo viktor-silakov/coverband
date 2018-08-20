@@ -81,6 +81,20 @@ namespace :coverband do
     app = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/app/") }
     lib = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/lib/") }
     engines = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/vendor/engines/") }
+    common_coverband_lines = redis_keys.reject {|x| x == "coverband2"}.inject(0){|sum, x| sum + (Redis.new.hgetall(x).count) }
+
+    # common_lines = 0
+    # code_lines = 0
+    # covered = 0
+    # redis_keys.each { |item|
+    #   common_lines += item.count
+    #   code_lines += item.select { |i| !i.nil? }.count
+    #   covered += item.select { |i| !i.nil? }.select { |i| i > 0 }.count
+    # }
+    #
+    # puts "Total lines: #{common_lines}"
+    # puts "Code lines: #{code_lines}"
+    # puts "Covered lines: #{covered}"
 
     puts "Redis stats:"
     puts "----------------"
@@ -89,6 +103,7 @@ namespace :coverband do
     puts "app                  #{app.count}"
     puts "lib                  #{lib.count}"
     puts "vendor/engines       #{engines.count}"
+    puts "common lines collect #{common_coverband_lines}"
   end
 
   ###
