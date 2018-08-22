@@ -91,7 +91,7 @@ module Coverband
         @file_line_usage.sort_by { |_key, value| value.length }.each do |pair|
           file = pair.first
           lines = pair.last
-          @logger.info "file: #{file} => #{lines.sort_by { |_key, value| value }}"
+          @logger.debug "file: #{file} => #{lines.sort_by { |_key, value| value }}"
         end
       end
 

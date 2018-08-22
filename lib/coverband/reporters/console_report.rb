@@ -7,7 +7,7 @@ module Coverband
         scov_style_report = super(store, options)
 
         scov_style_report.each_pair do |file, usage|
-          Coverband.configuration.logger.info "#{file}: #{usage}"
+          Coverband.configuration.logger.debug "#{file}: #{usage}"
         end
         scov_style_report
       end
