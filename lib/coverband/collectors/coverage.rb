@@ -12,11 +12,12 @@ module Coverband
       end
 
       def report_coverage(force: false)
+        @logger.info "force key is: '#{force}'"
         if !@enabled || !force
           @logger.info 'coverage disabled' if @verbose
           return
         end
-
+        @logger.info 'run report coverage with "force" key'
         if failed_recently?
           @logger.error 'coverage reporting standing-by because of recent failure' if @verbose
           return
