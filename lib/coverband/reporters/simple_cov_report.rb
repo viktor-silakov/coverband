@@ -1,10 +1,12 @@
 # frozen_string_literal: true
-p Dir.pwd
+# p Dir.pwd
 module Coverband
   module Reporters
     class SimpleCovReport < Base
 
       def self.normalize_scov_report(report)
+        return report if Coverband.configuration.collector == 'coverage'
+
         report.inject({}) do |mem, (file, cover_hits)|
           mem.merge(
               { file => (
