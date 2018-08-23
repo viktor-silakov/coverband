@@ -13,7 +13,7 @@ module Coverband
 
       def report_coverage(force: false)
         @logger.info "force key is: '#{force}'"
-        if !@enabled || !force
+        if !@enabled && !force
           @logger.info 'coverage disabled' if @verbose
           return
         end
