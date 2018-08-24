@@ -43,6 +43,7 @@ module Coverband
           @logger.debug 'coverage report: '
           @logger.debug @file_line_usage.inspect
         end
+        @file_line_usage
       # StandardError might be better option
       # coverband previously had RuntimeError here
       # but runtime error can let a large number of error crash this method

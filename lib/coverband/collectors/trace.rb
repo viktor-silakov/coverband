@@ -31,8 +31,8 @@ module Coverband
         unset_tracer
       end
 
-      def report_coverage
-        unless @enabled
+      def report_coverage(force: false)
+        if !@enabled && !force
           @logger.info 'coverage disabled' if @verbose
           return
         end
