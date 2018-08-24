@@ -38,7 +38,7 @@ module Coverband
 
         if @store
           @store.save_report(@file_line_usage)
-          @usage = @file_line_usage
+          @usage = @file_line_usage.clone
           @file_line_usage.clear
         elsif @verbose
           @logger.debug 'coverage report: '
