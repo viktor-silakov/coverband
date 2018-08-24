@@ -17,7 +17,7 @@ module Coverband
           @logger.info 'coverage disabled' if @verbose
           return
         end
-        @logger.info 'run report coverage with "force" key'
+        @logger.info 'run report coverage with "force" key' if force
         if failed_recently?
           @logger.error 'coverage reporting standing-by because of recent failure' if @verbose
           return
