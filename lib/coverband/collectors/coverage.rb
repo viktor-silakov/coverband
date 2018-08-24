@@ -38,12 +38,13 @@ module Coverband
 
         if @store
           @store.save_report(@file_line_usage)
+          @usage = @file_line_usage
           @file_line_usage.clear
         elsif @verbose
           @logger.debug 'coverage report: '
           @logger.debug @file_line_usage.inspect
         end
-        return @file_line_usage
+        return @usage
       # StandardError might be better option
       # coverband previously had RuntimeError here
       # but runtime error can let a large number of error crash this method
