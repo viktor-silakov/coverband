@@ -3,7 +3,7 @@
 module Coverband
   class Configuration
     attr_accessor :redis, :root_paths, :root,
-                  :ignore, :additional_files, :percentage, :verbose,
+                  :ignore, ignore_load, :additional_files, :percentage, :verbose,
                   :reporter, :startup_delay, :memory_caching,
                   :include_gems, :collector, :disable_on_failure_for,
                   :redis_namespace, :redis_ttl,
@@ -16,6 +16,7 @@ module Coverband
       @redis = nil
       @root_paths = []
       @ignore = []
+      @ignore_load = []
       @additional_files = []
       @include_gems = false
       @percentage = 0.0

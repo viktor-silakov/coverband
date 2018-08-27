@@ -24,7 +24,7 @@ module Coverband
     end
 
     def self.exclude_files(files)
-      Coverband.configuration.ignore.each do |ignore|
+      Coverband.configuration.ignore_load.each do |ignore|
         path = Coverband.configuration.root + "/#{ignore}"
         excludes = File.directory?(path) ? Dir.glob("#{path}/**/*") : [path]
         files -= excludes

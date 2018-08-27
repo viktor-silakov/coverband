@@ -37,6 +37,7 @@ module Coverband
         end
 
         if @store
+          @logger.info 'save report'
           @store.save_report(@file_line_usage)
           @usage = @file_line_usage.clone
           @file_line_usage.clear
