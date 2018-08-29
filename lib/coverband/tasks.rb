@@ -45,6 +45,8 @@ namespace :coverband do
         if File.exist?("#{Rails.root}/lib")
           safely_import_files(Dir.glob("#{Rails.root}/lib/**/*.rb"))
         end
+        require '/home/activebilling/core/current/config/plugin_loader.rb'
+        Plugin.load
       end
     end
 
