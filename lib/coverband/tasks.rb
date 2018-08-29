@@ -96,8 +96,8 @@ namespace :coverband do
     # puts "Total lines: #{common_lines}"
     # puts "Code lines: #{code_lines}"
     # puts "Covered lines: #{covered}"
-
-    puts "Redis stats:"
+    require 'socket'
+    puts "Redis stats on '#{Socket.gethostname}':"
     puts "----------------"
     puts "total                #{redis_keys.count}"
     puts "total without empty  #{results_check.count}"
