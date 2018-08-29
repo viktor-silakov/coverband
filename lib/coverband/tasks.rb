@@ -64,10 +64,11 @@ namespace :coverband do
     results = convert_coverage_format(Coverband::Baseline.results.reject { |key, _val| !key.match(project_directory) || Coverband.configuration.ignore.any? { |pattern| key.match(/#{pattern}/) } })
     results_check = results.reject { |_key, val| val.empty? }
 
+    rds = Coverband.configuration.redis
     cnt = 0
     i = 0
     until cnt >= results_check.count
-      cnt = Redis.new.keys.select { |x| x.include?("coverband2") }.count
+      cnt = rds.keys.select { |x| x.include?("coverband2") }.count
       puts "i: #{i} cnt: #{cnt}"
       if i > 120
         puts "Error: Redis timeout after '#{i}' attempts count '#{cnt}'"
@@ -77,7 +78,7 @@ namespace :coverband do
       sleep 1
     end
 
-    rds = Redis.new
+
     redis_keys = rds.keys.select { |x| x.include?("coverband2") }
     app = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/app/") }
     lib = redis_keys.select { |x| x.include?("coverband2") }.select { |x| x.include?("#{pwd}/lib/") }
