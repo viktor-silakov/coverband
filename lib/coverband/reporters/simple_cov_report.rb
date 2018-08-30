@@ -35,7 +35,7 @@ module Coverband
 
         # add in files never hit in coverband
         # SimpleCov.track_files "#{current_root}/{app,lib,config}/**/*.{rb,haml,erb,slim}"
-        SimpleCov.track_files "#{current_root}/{app,lib,config}/**/*.{rb}"
+        SimpleCov.track_files "#{current_root}/{app,lib,config,vendor}/**/*.{rb}"
 
         # still apply coverband filters
         report_files = SimpleCov.add_not_loaded_files(scov_style_report)
@@ -45,7 +45,8 @@ module Coverband
           filtered_report_files[file] = data
         end
 
-        SimpleCov::Result.new(filtered_report_files).format!
+        result = SimpleCov::Result.new(filtered_report_files)
+        result.format!
 
         if open_report
           `open #{SimpleCov.coverage_dir}/index.html`
@@ -59,6 +60,7 @@ module Coverband
             secret_access_key: Coverband.configuration.s3_secret_access_key
         }
         S3ReportWriter.new(Coverband.configuration.s3_bucket, s3_writer_options).persist! if Coverband.configuration.s3_bucket
+        result
       end
     end
   end
