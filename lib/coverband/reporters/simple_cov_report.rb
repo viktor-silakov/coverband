@@ -34,7 +34,8 @@ module Coverband
         SimpleCov.root(current_root)
 
         # add in files never hit in coverband
-        SimpleCov.track_files "#{current_root}/{app,lib,config}/**/*.{rb,haml,erb,slim}"
+        # SimpleCov.track_files "#{current_root}/{app,lib,config}/**/*.{rb,haml,erb,slim}"
+        SimpleCov.track_files "#{current_root}/{app,lib,config}/**/*.{rb}"
 
         # still apply coverband filters
         report_files = SimpleCov.add_not_loaded_files(scov_style_report)
