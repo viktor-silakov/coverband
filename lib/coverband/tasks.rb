@@ -4,19 +4,23 @@ namespace :coverband do
   def safely_import_files(files_to_cover)
     if files_to_cover.any?
       files = Coverband::Baseline.exclude_files(files_to_cover)
-
+      error_load_count = 0
       files.each do |file|
         begin
           require_dependency file
         rescue Exception => err
           if Coverband.configuration.verbose
             Coverband.configuration.logger.info "error to load: '#{file}'"
+            puts "COVERBAND BASELINE LOAD WARNING: #{files}"
             Coverband.configuration.logger.debug "error adding file to baseline: #{file}"
             Coverband.configuration.logger.debug "error: #{err}"
             Coverband.configuration.logger.debug "#{err.backtrace.join("\n")}"
+            error_load_count += 1
           end
         end
       end
+      puts "COVERBAND BASELINE LOAD WARNING FILE COUNT: #{error_load_count}"
+      Coverband.configuration.logger.info "COVERBAND BASELINE LOAD WARNING FILE COUNT: #{error_load_count}"
     end
   end
 
