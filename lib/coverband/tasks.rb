@@ -11,7 +11,7 @@ namespace :coverband do
         rescue Exception => err
           if Coverband.configuration.verbose
             Coverband.configuration.logger.info "error to load: '#{file}'"
-            puts "COVERBAND BASELINE LOAD WARNING: #{files}"
+            puts "COVERBAND BASELINE LOAD WARNING: #{file}"
             Coverband.configuration.logger.debug "error adding file to baseline: #{file}"
             Coverband.configuration.logger.debug "error: #{err}"
             Coverband.configuration.logger.debug "#{err.backtrace.join("\n")}"
